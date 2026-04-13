@@ -235,15 +235,20 @@ export default function WebGL() {
 
       const zoomFac = valMap(scroll, [0, 1], [0, 1]);
 
-      camera.position.z = valMap(
-        scroll,
-        [0, 1],
-        [-2.5 - sizes.portraitOffset, -10 - sizes.portraitOffset]
-      );
-
       const isPortrait = sizes.portraitOffset > 1.0;
       const hOffset = isPortrait ? 0 : controlProps.computerHorizontal * zoomFac;
       const yAngle  = isPortrait ? 0 : controlProps.computerAngle * zoomFac;
+
+      if (isPortrait) {
+        // Fixed close camera for portrait — fills screen with the model
+        camera.position.z = valMap(scroll, [0, 1], [-1.5, -6]);
+      } else {
+        camera.position.z = valMap(
+          scroll,
+          [0, 1],
+          [-2.5 - sizes.portraitOffset, -10 - sizes.portraitOffset]
+        );
+      }
 
       computerGroup.position.x = hOffset;
       computerGroup.position.y = valMap(
