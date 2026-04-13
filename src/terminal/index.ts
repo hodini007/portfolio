@@ -108,6 +108,8 @@ export default function Terminal(screenTextEngine: {
       submitMobileCommand(mobileInput.value);
     });
     mobileInput.addEventListener("keydown", (e) => {
+      // Prevent keystrokes from leaking to the window keypress handler
+      e.stopPropagation();
       if (e.key === "Enter") {
         e.preventDefault();
         submitMobileCommand(mobileInput.value);
@@ -134,6 +136,9 @@ export default function Terminal(screenTextEngine: {
     }
   });
   window.addEventListener("keypress", (e) => {
+    // Don't intercept keystrokes when mobile input bar is focused
+    if (document.activeElement?.id === "mobile-input") return;
+
     if (
       textarea.readOnly === true ||
       document.activeElement?.id !== "textarea"
