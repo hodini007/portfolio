@@ -67,6 +67,62 @@ export default function Terminal(screenTextEngine: {
   }
   textarea.addEventListener("input", onInput, false);
 
+  // ── Mobile command bar ──────────────────────────────────────────────
+  const mobileInput = document.getElementById("mobile-input") as HTMLInputElement | null;
+  const mobileSendBtn = document.getElementById("mobile-send-btn") as HTMLButtonElement | null;
+  const mobilePath = document.getElementById("mobile-path") as HTMLElement | null;
+  const mobileChips = document.querySelectorAll<HTMLButtonElement>(".mobile-cmd-chip");
+
+  function submitMobileCommand(cmd: string) {
+    if (!cmd.trim()) return;
+
+    // Mirror command into the 3D terminal as typed text then freeze
+    const fakeAdd = stringEditDistance("", cmd);
+    if (fakeAdd) {
+      oldText = "";
+      textarea.value = cmd;
+      screenTextEngine.userInput(fakeAdd, cmd.length);
+    }
+
+    screenTextEngine.freezeInput();
+    bash.input(cmd);
+
+    oldText = "";
+    textarea.value = "";
+    screenTextEngine.userInput(
+      stringEditDistance(cmd, "")!,
+      0
+    );
+    screenTextEngine.scrollToEnd();
+
+    // Update path label
+    if (mobilePath) {
+      mobilePath.textContent = document.title; // fallback
+      // Read from the last printed prompt line by checking bash state
+    }
+    if (mobileInput) mobileInput.value = "";
+  }
+
+  if (mobileSendBtn && mobileInput) {
+    mobileSendBtn.addEventListener("click", () => {
+      submitMobileCommand(mobileInput.value);
+    });
+    mobileInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        submitMobileCommand(mobileInput.value);
+      }
+    });
+  }
+
+  mobileChips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const cmd = chip.dataset.cmd ?? "";
+      submitMobileCommand(cmd);
+    });
+  });
+  // ────────────────────────────────────────────────────────────────────
+
   canvas.addEventListener("pointerup", (ev) => {
     if (ev.pointerType === "mouse") {
       textarea.readOnly = false;

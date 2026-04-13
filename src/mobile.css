@@ -1,0 +1,188 @@
+/* ============================================
+   MOBILE TERMINAL COMMAND BAR
+   Only visible on touch/portrait devices
+   ============================================ */
+
+#mobile-terminal {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: #050505;
+  border-top: 2px dashed #f99021;
+  box-shadow: 0 -4px 24px rgba(249, 144, 33, 0.2);
+  padding: 10px 12px;
+  box-sizing: border-box;
+  flex-direction: column;
+  gap: 8px;
+  /* Safe area for notch/home indicator */
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+}
+
+/* Path display */
+#mobile-path {
+  font-family: "chill", monospace;
+  font-size: 12px;
+  color: #f99021;
+  opacity: 0.7;
+  padding-left: 2px;
+  letter-spacing: 0.05em;
+}
+
+/* Input row */
+#mobile-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#mobile-prompt-label {
+  font-family: "chill", monospace;
+  font-size: 15px;
+  color: #f99021;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#mobile-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #f99021;
+  color: #f99021;
+  font-family: "chill", monospace;
+  font-size: 15px;
+  padding: 4px 2px;
+  outline: none;
+  caret-color: #f99021;
+  min-width: 0;
+}
+
+#mobile-input::placeholder {
+  color: rgba(249, 144, 33, 0.35);
+}
+
+#mobile-send-btn {
+  background-color: #f99021;
+  color: #050505;
+  border: none;
+  font-family: "chill", monospace;
+  font-size: 14px;
+  padding: 6px 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+
+#mobile-send-btn:active {
+  opacity: 0.7;
+}
+
+/* Quick commands row */
+#mobile-quick-cmds {
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+#mobile-quick-cmds::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-cmd-chip {
+  background: transparent;
+  border: 1px dashed rgba(249, 144, 33, 0.5);
+  color: #f99021;
+  font-family: "chill", monospace;
+  font-size: 12px;
+  padding: 3px 10px;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s;
+}
+
+.mobile-cmd-chip:active {
+  background-color: rgba(249, 144, 33, 0.15);
+}
+
+/* Show on touch / portrait */
+@media (pointer: coarse), (max-width: 768px) {
+  #mobile-terminal {
+    display: flex;
+  }
+
+  /* Push canvas up so command bar doesn't cover the terminal */
+  .webgl {
+    bottom: 0;
+  }
+}
+
+/* ============================================
+   RESPONSIVE LAYOUT — HTML MAIN SECTION
+   ============================================ */
+
+@media (max-width: 768px) {
+  html, body {
+    font-size: 16px;
+  }
+
+  h1 {
+    font-size: clamp(1.1em, 5vw, 2em);
+    padding: 10px 12px;
+  }
+
+  h2 {
+    font-size: clamp(1em, 4vw, 1.2em);
+    padding: 8px 12px;
+  }
+
+  .skills, p {
+    width: 100%;
+    padding: 12px 16px;
+  }
+
+  .skills li {
+    font-size: 14px;
+  }
+
+  section {
+    padding-bottom: 48px;
+    margin-bottom: 48px;
+  }
+
+  footer {
+    width: 100%;
+    font-size: 11px;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  /* Add space at bottom so mobile command bar doesn't cover content */
+  main {
+    padding-bottom: 120px;
+  }
+}
+
+/* Nav touch targets */
+@media (max-width: 768px) {
+  .menu-body a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+  }
+
+  .btn {
+    min-height: 44px;
+    align-items: center;
+  }
+}

@@ -25,6 +25,7 @@
     content="My name is MD. Raiyan Bin Rafique. I’m a Computer Science student at RUET with a passion for Machine Learning, Python, Julia, and scientific research." />
   <link rel="manifest" href="/manifest.json" />
   <link rel="stylesheet" href="/src/main.css" />
+  <link rel="stylesheet" href="/src/mobile.css" />
   <script type="module" src="/src/main.ts"></script>
 </head>
 
@@ -32,6 +33,28 @@
   <div id="home"></div>
 
   <canvas class="webgl"></canvas>
+
+  <!-- Mobile terminal command bar -->
+  <div id="mobile-terminal">
+    <div id="mobile-path">user:~$</div>
+    <div id="mobile-input-row">
+      <span id="mobile-prompt-label">$</span>
+      <input id="mobile-input" type="text" placeholder="type a command..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      <button id="mobile-send-btn">ENTER</button>
+    </div>
+    <div id="mobile-quick-cmds">
+      <button class="mobile-cmd-chip" data-cmd="ls">ls</button>
+      <button class="mobile-cmd-chip" data-cmd="cd about">cd about</button>
+      <button class="mobile-cmd-chip" data-cmd="cat about.md">cat about.md</button>
+      <button class="mobile-cmd-chip" data-cmd="cd ~">cd ~</button>
+      <button class="mobile-cmd-chip" data-cmd="cd projects">cd projects</button>
+      <button class="mobile-cmd-chip" data-cmd="cd skills">cd skills</button>
+      <button class="mobile-cmd-chip" data-cmd="cd education">cd education</button>
+      <button class="mobile-cmd-chip" data-cmd="cd certifications">cd certifications</button>
+      <button class="mobile-cmd-chip" data-cmd="cat skills.md">cat skills.md</button>
+      <button class="mobile-cmd-chip" data-cmd="help">help</button>
+    </div>
+  </div>
 
   <div id="hero-backup">
     <h3>Hi there, I’m</h3>

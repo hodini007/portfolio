@@ -57,8 +57,8 @@ export default function WebGL() {
       height: window.innerHeight,
       portraitOffset: valMap(
         window.innerHeight / document.documentElement.clientWidth,
-        [0.75, 1.75],
-        [0, 2]
+        [0.75, 2.2],
+        [0, 3.5]
       ),
     };
 
@@ -172,8 +172,8 @@ export default function WebGL() {
         updateCanvasSize(sizes.width, sizes.height);
         sizes.portraitOffset = valMap(
           sizes.height / sizes.width,
-          [0.8, 1.8],
-          [0, 2.5]
+          [0.8, 2.2],
+          [0, 3.5]
         );
       },
       { passive: true }

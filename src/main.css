@@ -1,5 +1,6 @@
 @import url("./collapse.css");
 @import url("./nav.css");
+@import url("./mobile.css");
 
 :root {
   --color: #00ffcc;
@@ -37,6 +38,7 @@ body {
   width: 100%;
   outline: none;
   z-index: 1;
+  touch-action: pan-y;
 }
 
 #hero-backup {
