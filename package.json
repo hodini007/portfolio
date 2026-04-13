@@ -1,11 +1,10 @@
 {
   "author": {
-    "name": "Ed Hinrichsen",
-    "url": "https://www.edwardh.io"
+    "name": "MD. Raiyan Bin Rafique"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/edhinrichsen/retro-computer-website.git"
+    "url": "git+https://github.com/hodini007/portfolio.git"
   },
   "license": "MIT",
   "name": "retro-computer-website",
