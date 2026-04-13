@@ -57,8 +57,8 @@ export default function WebGL() {
       height: window.innerHeight,
       portraitOffset: valMap(
         window.innerHeight / document.documentElement.clientWidth,
-        [0.75, 2.2],
-        [0, 3.5]
+        [0.75, 2.5],
+        [0, 1.2]
       ),
     };
 
@@ -172,8 +172,8 @@ export default function WebGL() {
         updateCanvasSize(sizes.width, sizes.height);
         sizes.portraitOffset = valMap(
           sizes.height / sizes.width,
-          [0.8, 2.2],
-          [0, 3.5]
+          [0.75, 2.5],
+          [0, 1.2]
         );
       },
       { passive: true }
@@ -254,14 +254,20 @@ export default function WebGL() {
 
       computerGroup.rotation.y = yAngle;
 
+      // In portrait: raise camera to frame the screen, not keyboard
+      const portraitCameraY = isPortrait
+        ? valMap(sizes.portraitOffset, [0, 1.2], [0, 0.6])
+        : 0;
+
       camera.position.x =
         computerParallax.x * valMap(scroll, [0, 1], [0.2, 5]) * 0.1 +
         camera.position.x * 0.9;
       camera.position.y =
         computerParallax.y * valMap(scroll, [0, 1], [0.2, 1.5]) * 0.1 +
-        camera.position.y * 0.9;
+        camera.position.y * 0.9 +
+        portraitCameraY;
 
-      camera.lookAt(new Vector3(0, 0, 0));
+      camera.lookAt(new THREE.Vector3(0, portraitCameraY * 0.5, 0));
 
       canvas.style.opacity = `${valMap(scroll, [1.25, 1.75], [1, 0])}`;
 
