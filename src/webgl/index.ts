@@ -241,14 +241,18 @@ export default function WebGL() {
         [-2.5 - sizes.portraitOffset, -10 - sizes.portraitOffset]
       );
 
-      computerGroup.position.x = controlProps.computerHorizontal * zoomFac;
+      const isPortrait = sizes.portraitOffset > 1.0;
+      const hOffset = isPortrait ? 0 : controlProps.computerHorizontal * zoomFac;
+      const yAngle  = isPortrait ? 0 : controlProps.computerAngle * zoomFac;
+
+      computerGroup.position.x = hOffset;
       computerGroup.position.y = valMap(
         scroll,
         [0, 1],
         [0, controlProps.computerHeight]
       );
 
-      computerGroup.rotation.y = controlProps.computerAngle * zoomFac;
+      computerGroup.rotation.y = yAngle;
 
       camera.position.x =
         computerParallax.x * valMap(scroll, [0, 1], [0.2, 5]) * 0.1 +
@@ -261,9 +265,8 @@ export default function WebGL() {
 
       canvas.style.opacity = `${valMap(scroll, [1.25, 1.75], [1, 0])}`;
 
-      if (sizes.portraitOffset > 0.5)
-        computerGroup.rotation.z = valMap(scroll, [0, 1], [-Math.PI / 2, 0]);
-      else computerGroup.rotation.z = 0;
+      // Always keep the computer upright — no Z-rotation on portrait
+      computerGroup.rotation.z = 0;
 
       if (assists.crtMesh.morphTargetInfluences) {
         assists.crtMesh.morphTargetInfluences[0] = valMap(
