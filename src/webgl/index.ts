@@ -276,8 +276,16 @@ export default function WebGL() {
 
       canvas.style.opacity = `${valMap(scroll, [1.25, 1.75], [1, 0])}`;
 
-      // Always keep the computer upright — no Z-rotation on portrait
-      computerGroup.rotation.z = 0;
+      // Portrait: boot rotation — starts sideways, rotates to face camera
+      if (isPortrait) {
+        const rotDuration = 2.0; // seconds
+        const rotProgress = Math.min(elapsedTime / rotDuration, 1.0);
+        // Ease-out cubic: starts fast, decelerates into position
+        const eased = 1 - Math.pow(1 - rotProgress, 3);
+        computerGroup.rotation.z = -Math.PI / 2 * (1 - eased);
+      } else {
+        computerGroup.rotation.z = 0;
+      }
 
       if (assists.crtMesh.morphTargetInfluences) {
         assists.crtMesh.morphTargetInfluences[0] = valMap(
