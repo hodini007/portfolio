@@ -27,6 +27,7 @@ export default function Applications(
     ls: ls(print, path),
     cd: cd(print, path),
     show: show(print, path),
+    cat: show(print, path),
     echo: echo(print, path),
     pwd: pwd(print, path),
     mkdir: mkdir(print, path),

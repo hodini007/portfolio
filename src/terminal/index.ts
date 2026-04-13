@@ -27,8 +27,19 @@ export default function Terminal(screenTextEngine: {
   textarea.value = "";
   textarea.readOnly = true;
   textarea.blur();
-  screenTextEngine.placeMarkdown(titleText);
-  screenTextEngine.placeText("user:~$");
+  const initialTitleHeight = screenTextEngine.placeMarkdown(titleText);
+  screenTextEngine.scroll(initialTitleHeight, "px", {
+    updateMaxScroll: true,
+    moveView: false,
+  });
+
+  const initialPromptHeight = screenTextEngine.placeText("user:~$");
+  screenTextEngine.scroll(initialPromptHeight, "lines", {
+    updateMaxScroll: true,
+    moveView: false,
+  });
+
+  screenTextEngine.scrollToEnd();
 
   const bash = Bash((s, md = false) => {
     if (md) {
@@ -88,11 +99,11 @@ export default function Terminal(screenTextEngine: {
     if (e.key === "Enter") {
       screenTextEngine.freezeInput();
       bash.input(textarea.value);
-
+      oldText = "";
       textarea.value = "";
       const change = stringEditDistance(oldText, textarea.value);
-      oldText = textarea.value;
       if (change) screenTextEngine.userInput(change, textarea.selectionStart);
+      screenTextEngine.scrollToEnd();
     }
   });
 

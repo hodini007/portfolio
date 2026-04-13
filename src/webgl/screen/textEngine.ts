@@ -108,7 +108,7 @@ export default function ScreenTextEngine(
   rootGroup.add(textBgMesh);
 
   const caret = new THREE.Mesh(
-    new THREE.PlaneBufferGeometry(h2Font.size, h2Font.size * 1.6),
+    new THREE.PlaneBufferGeometry(h2Font.width, h2Font.size / 5),
     textMaterial
   );
   caret.position.z = -0.1;
@@ -142,7 +142,8 @@ export default function ScreenTextEngine(
         h2Font.leading * Math.floor((pos + terminalPromptOffset) / charsPerLine)
       );
 
-      if (pos < inputBuffer.length) {
+      if (pos < inputBuffer.length && pos >= 0) {
+        charPos.x = inputBuffer[pos].position.x;
         charPos.y = inputBuffer[pos].position.y;
 
         updateCharUnderCaret(false);
@@ -150,12 +151,12 @@ export default function ScreenTextEngine(
       }
     }
 
-    let x = charPos.x + h2Font.size / 2;
-    let y = charPos.y - h2Font.size / 1.9;
+    let x = charPos.x + h2Font.width / 2;
+    let y = charPos.y - h2Font.height - h2Font.size / 6;
 
     if (x > screenWidth) {
       y -= h2Font.leading;
-      x = h2Font.size / 2;
+      x = h2Font.width / 2;
     }
     caret.position.x = x;
     caret.position.y = y;
@@ -270,6 +271,8 @@ export default function ScreenTextEngine(
   };
   function placeMarkdown(md: string) {
     const yBefore = charNextLoc.y;
+    // Always start output on a fresh line below the command
+    placeLinebreak(h2Font);
 
     const tokens: MDtoken[] = [];
 
@@ -400,7 +403,25 @@ export default function ScreenTextEngine(
           break;
         case "br":
           let font = breakFont;
-          if (i > 0) {
+          if (i + 1 < tokens.length) {
+            const type = tokens[i + 1].type;
+            switch (type) {
+              case "h1":
+                font = h1Font;
+                break;
+              case "h2":
+                font = h2Font;
+                break;
+              case "h3":
+                font = h3Font;
+                break;
+              case "p":
+                font = paragraphFont;
+                break;
+              default:
+                break;
+            }
+          } else if (i > 0) {
             const type = tokens[i - 1].type;
             switch (type) {
               case "h1":
@@ -444,6 +465,7 @@ export default function ScreenTextEngine(
 
     let numOfLines = 0;
 
+    charNextLoc.x = 0;
     const strWithNewline = str.split("\n");
 
     for (let i = 0; i < strWithNewline.length; i++) {
@@ -633,10 +655,23 @@ export default function ScreenTextEngine(
     const newNumberOfInputLines = Math.floor(
       (inputBuffer.length + terminalPromptOffset) / charsPerLine
     );
+
+    charNextLoc.x = 0;
     charNextLoc.y += h2Font.leading * newNumberOfInputLines;
+
+    for (const c of inputBuffer) {
+      rootGroup.remove(c);
+      c.geometry.dispose();
+    }
+    inputBuffer = [];
+    terminalPromptOffset = 0;
+    oldNumberOfInputLines = 0;
   }
 
-  let maxScroll = rootGroup.position.y;
+  const logicalScreenHeight = 0.95;
+  let totalContentHeight = 0;
+  let maxScroll = 0;
+
   function scroll(
     val: number,
     units: "lines" | "px",
@@ -647,12 +682,19 @@ export default function ScreenTextEngine(
   ) {
     let amount = val;
     if (units === "lines") amount *= h2Font.leading;
-    if (options.moveView) rootGroup.position.y += amount;
-    if (options.updateMaxScroll) maxScroll += amount;
+    
+    if (options.updateMaxScroll) {
+      totalContentHeight += amount;
+      maxScroll = Math.max(0, totalContentHeight - logicalScreenHeight);
+    }
 
+    if (options.moveView) rootGroup.position.y += amount;
+
+    // Clamp scroll position
     if (rootGroup.position.y < 0) rootGroup.position.y = 0;
     if (rootGroup.position.y > maxScroll) rootGroup.position.y = maxScroll;
   }
+
   function scrollToEnd() {
     if (rootGroup.position.y !== maxScroll) rootGroup.position.y = maxScroll;
   }

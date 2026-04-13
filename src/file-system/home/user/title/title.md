@@ -1,14 +1,15 @@
 
-      ___           ___           ___           ___           ___           ___     
-     /\  \         /\  \         /\  \         |\__\         /\  \         /\__\    
-    /::\  \       /::\  \        \:\  \        |:|  |       /::\  \       /::|  |   
-   /:/\:\  \     /:/\:\  \        \:\  \       |:|  |      /:/\:\  \     /:|:|  |   
-  /::\~\:\  \   /::\~\:\  \       /::_| |      |:|__|__   /::\~\:\  \   /:/|:|  |__ 
- /:/\:\ \:\__\ /:/\:\ \:\__\     /:/  | |____  /::::\__\ /:/\:\ \:\__\ /:/ |:| /\__\
- \/_|::\/:/  / \/__\:\/:/  /    /::\  / /_/_/  \::::/  / \/__\:\/:/  / \/__|:|/:/  /
-    |:|::/  /       \::/  /    /::::\/__ /      \::/  /       \::/  /      |:/:/  / 
-    |:|\/__/        /:/  /    /::::::\  /       /::/  /       /:/  /       |::/  /  
-    |:|  |         /:/  /    /:::/\:::\/       /:/  /        /:/  /        /:/  /   
-     \|__|         \/__/     \/__/ \/__/       \/__/         \/__/         \/__/    
+# MD. Raiyan Bin Rafique — Terminal OS v1.0
 
-Type 'ls' and hit enter to view files. Type 'cd about' and 'cat about.md'.
+--------------------------------------------------------------------------------
+
+Welcome to the retro terminal portfolio. 
+Technical details and project documentation are indexed in the virtual file system.
+
+Type 'ls' to view directories.
+Use 'cd' to enter folders (e.g., 'cd about').
+Use 'cat' to read files (e.g., 'cat about.md').
+
+Type 'help' for a full list of commands.
+
+--------------------------------------------------------------------------------
