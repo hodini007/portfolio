@@ -1,0 +1,31 @@
+{
+  "author": {
+    "name": "Ed Hinrichsen",
+    "url": "https://www.edwardh.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edhinrichsen/retro-computer-website.git"
+  },
+  "license": "MIT",
+  "name": "retro-computer-website",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lil-gui": "^0.11.0",
+    "stats.js": "^0.17.0",
+    "three": "^0.134.0"
+  },
+  "devDependencies": {
+    "@types/stats.js": "^0.17.0",
+    "@types/three": "^0.136.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.8",
+    "vite-plugin-checker": "^0.6.4"
+  }
+}
