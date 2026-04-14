@@ -118,12 +118,18 @@ export default function Terminal(screenTextEngine: {
       mobileBar.style.bottom = "0";
       mobileBar.style.transform = "none";
     } else {
+      // Get exact bar height (default ~85px) to compensate for swing
+      const barH = mobileBar.offsetHeight || 85; 
+      // When rotating from bottom-left corner with negative angle, the top-left edge swings left off-screen.
+      // We compensate by pushing it right using Math.sin
+      const compX = -barH * Math.sin(angleDeg * Math.PI / 180);
+      
       // Still rotating: positioned along left edge, acting as landscape bar
       mobileBar.style.left   = "0";
       mobileBar.style.bottom = "0";
       mobileBar.style.right  = "auto";
       mobileBar.style.width  = `${currentW}px`; // dynamic width ensures it covers the edge perfectly
-      mobileBar.style.transform = `rotate(${angleDeg}deg)`;
+      mobileBar.style.transform = `translateX(${compX}px) rotate(${angleDeg}deg)`;
     }
   }
 
