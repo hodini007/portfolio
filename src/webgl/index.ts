@@ -241,10 +241,8 @@ export default function WebGL() {
       const yAngle  = isPortrait ? 0 : controlProps.computerAngle * zoomFac;
 
       if (isPortrait) {
-        // scroll 0→0.6: rotates from -90° to 0°
-        // camera: far when sideways (prevent cutting), close when upright
-        const rotProgress = valMap(scroll, [0, 0.6], [0, 1]);
-        camera.position.z = valMap(rotProgress, [0, 1], [-4.0, -1.8]);
+        // In portrait: stay close, aim at the screen area (upper part of model)
+        camera.position.z = -2.2;
       } else {
         camera.position.z = valMap(
           scroll,
@@ -275,17 +273,14 @@ export default function WebGL() {
         camera.position.y * 0.9 +
         portraitCameraY;
 
-      camera.lookAt(new THREE.Vector3(0, portraitCameraY * 0.5, 0));
+      camera.lookAt(
+        new THREE.Vector3(0, isPortrait ? 0.4 : portraitCameraY * 0.5, 0)
+      );
 
       canvas.style.opacity = `${valMap(scroll, [1.25, 1.75], [1, 0])}`;
 
-      // Portrait: scroll-driven rotation — starts sideways, user scrolls to reveal terminal
-      if (isPortrait) {
-        const rotProgress = valMap(scroll, [0, 0.6], [0, 1]);
-        computerGroup.rotation.z = -Math.PI / 2 * (1 - rotProgress);
-      } else {
-        computerGroup.rotation.z = 0;
-      }
+      // Always upright — rotation gimmick removed, usability first
+      computerGroup.rotation.z = 0;
 
       if (assists.crtMesh.morphTargetInfluences) {
         assists.crtMesh.morphTargetInfluences[0] = valMap(

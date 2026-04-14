@@ -74,23 +74,9 @@ export default function Terminal(screenTextEngine: {
 
   function updateBarRotation() {
     if (!mobileBar || !isTouch) return;
-    const isPortraitNow = window.innerWidth < window.innerHeight;
-    if (!isPortraitNow) {
-      // Landscape/desktop: fully visible, normal
-      mobileBar.style.opacity = "1";
-      mobileBar.style.pointerEvents = "all";
-      mobileBar.style.transform = "";
-      mobileBar.style.width = "";
-      mobileBar.style.right = "";
-      return;
-    }
-    const viewH = window.innerHeight;
-    const scrollProgress = Math.min(window.scrollY / (viewH * 0.6), 1);
-    // While rotating: hide bar. Once upright: fade in.
-    const opacity = scrollProgress >= 0.85 ? ((scrollProgress - 0.85) / 0.15) : 0;
-    mobileBar.style.opacity = String(opacity);
-    mobileBar.style.pointerEvents = scrollProgress >= 1 ? "all" : "none";
-    // Reset any leftover transform/width from old approach
+    // Always show bar — no rotation gimmick, just keep it usable
+    mobileBar.style.opacity = "1";
+    mobileBar.style.pointerEvents = "all";
     mobileBar.style.transform = "";
     mobileBar.style.width = "";
     mobileBar.style.right = "";
