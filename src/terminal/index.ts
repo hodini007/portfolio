@@ -106,8 +106,8 @@ export default function Terminal(screenTextEngine: {
     mobileBar.style.opacity = String(opacity);
     mobileBar.style.pointerEvents = pointer;
 
-    // Anchor to bottom left so it folds onto the left edge
-    mobileBar.style.transformOrigin = "bottom left";
+    // Anchor to bottom right so it folds onto the right edge reading Bottom-To-Top
+    mobileBar.style.transformOrigin = "bottom right";
     
     // Dynamically interpolate the width from viewport height to viewport width
     const currentW = viewH + (window.innerWidth - viewH) * scrollProgress;
@@ -120,16 +120,15 @@ export default function Terminal(screenTextEngine: {
       mobileBar.style.bottom = "0";
       mobileBar.style.transform = "none";
     } else {
-      const barH = mobileBar.offsetHeight || 85; 
-      // Rotating from bottom-left corner with negative angle swings the top-left edge physically left.
-      // We pull it back right onto the screen using Math.sin
-      const compX = -barH * Math.sin(angleDeg * Math.PI / 180);
+      // Rotating -90deg from bottom-right makes it drop BELOW the screen by exactly its width.
+      // We translate it UP by its width (viewH) inversely scaled to keep it planted on-screen.
+      const shiftY = -viewH * (1 - scrollProgress);
       
-      mobileBar.style.left   = "0";
-      mobileBar.style.right  = "auto";
+      mobileBar.style.left   = "auto";
+      mobileBar.style.right  = "0";
       mobileBar.style.bottom = "0";
       mobileBar.style.width  = `${currentW}px`; 
-      mobileBar.style.transform = `translateX(${compX}px) rotate(${angleDeg}deg)`;
+      mobileBar.style.transform = `translateY(${shiftY}px) rotate(${angleDeg}deg)`;
     }
   }
 
