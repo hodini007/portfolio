@@ -98,14 +98,15 @@ export default function Terminal(screenTextEngine: {
     // Rotate along with the 3D model (scroll 0 to 0.6)
     const scrollProgress = Math.min(rawScroll / 0.6, 1);
     
-    // -90deg at scroll=0, 0deg when scrollProgress=1
-    const angleDeg = -90 * (1 - scrollProgress);
+    // Rotate along with the 3D model: +90deg at scroll=0, 0deg at scroll=1
+    const angleDeg = 90 * (1 - scrollProgress);
     mobileBar.style.setProperty("--bar-rot", `${angleDeg}deg`);
 
     mobileBar.style.opacity = String(opacity);
     mobileBar.style.pointerEvents = pointer;
 
-    mobileBar.style.transformOrigin = "bottom left";
+    // Anchor to bottom right so it folds onto the right edge
+    mobileBar.style.transformOrigin = "bottom right";
     
     // Dynamically interpolate the width from viewport height to viewport width
     const currentW = viewH + (window.innerWidth - viewH) * scrollProgress;
@@ -118,17 +119,15 @@ export default function Terminal(screenTextEngine: {
       mobileBar.style.bottom = "0";
       mobileBar.style.transform = "none";
     } else {
-      // Get exact bar height (default ~85px) to compensate for swing
       const barH = mobileBar.offsetHeight || 85; 
-      // When rotating from bottom-left corner with negative angle, the top-left edge swings left off-screen.
-      // We compensate by pushing it right using Math.sin
+      // Rotating from bottom-right corner outwards; it swings right.
+      // We compensate by pulling it back left into the screen using Math.sin
       const compX = -barH * Math.sin(angleDeg * Math.PI / 180);
       
-      // Still rotating: positioned along left edge, acting as landscape bar
-      mobileBar.style.left   = "0";
+      mobileBar.style.left   = "auto";
+      mobileBar.style.right  = "0";
       mobileBar.style.bottom = "0";
-      mobileBar.style.right  = "auto";
-      mobileBar.style.width  = `${currentW}px`; // dynamic width ensures it covers the edge perfectly
+      mobileBar.style.width  = `${currentW}px`; 
       mobileBar.style.transform = `translateX(${compX}px) rotate(${angleDeg}deg)`;
     }
   }
@@ -187,6 +186,14 @@ export default function Terminal(screenTextEngine: {
         e.preventDefault();
         submitMobileCommand(mobileInput.value);
       }
+    });
+    // Live mirror mobile typing into the 3D terminal
+    mobileInput.addEventListener("input", () => {
+      const change = stringEditDistance(oldText, mobileInput.value);
+      oldText = mobileInput.value;
+      textarea.value = mobileInput.value;
+      if (change) screenTextEngine.userInput(change, mobileInput.selectionStart ?? mobileInput.value.length);
+      screenTextEngine.scrollToEnd();
     });
   }
 
