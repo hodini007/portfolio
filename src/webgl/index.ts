@@ -274,19 +274,26 @@ export default function WebGL() {
         // The terminal screen's pivot radius from the base (0,0)
         const screenRadius = 0.5;
         
+        // We add a pan offset when sideways. By shifting the camera +X (Right), 
+        // the 3D model appears shifted LEFT on the phone, avoiding the new right-edge HTML panel.
+        const panOffset = valMap(rotProgress, [0, 1], [0.6, 0]);
+
         // As model rotates, screen moves in an arc
-        targetLookAtX = screenRadius * Math.sin(-rotZ);
+        targetLookAtX = screenRadius * Math.sin(-rotZ) + panOffset;
         targetLookAtY = screenRadius * Math.cos(rotZ);
         
         // Camera stays directly in front of the screen
         targetCameraX = targetLookAtX;
         targetCameraY = targetLookAtY;
         
-        // Move camera slightly further away when sideways to prevent edges cutting
-        camera.position.z = valMap(rotProgress, [0, 1], [-3.2, -2.4]);
+        // Move camera significantly further away when sideways to prevent edges cutting
+        // and to keep everything properly framed despite the HTML sidebar.
+        camera.position.z = valMap(rotProgress, [0, 1], [-4.2, -2.4]);
       } else {
         computerGroup.rotation.z = 0;
+        targetLookAtX = 0;
         targetLookAtY = 0;
+        targetCameraX = 0;
         targetCameraY = 0;
       }
 
