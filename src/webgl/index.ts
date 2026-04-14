@@ -260,27 +260,47 @@ export default function WebGL() {
 
       computerGroup.rotation.y = yAngle;
 
-      // In portrait: raise camera to frame the screen, not keyboard
-      const portraitCameraY = isPortrait
-        ? valMap(sizes.portraitOffset, [0, 1.2], [0, 0.6])
-        : 0;
+      let targetCameraX = 0;
+      let targetCameraY = 0;
+      let targetLookAtX = 0;
+      let targetLookAtY = 0;
 
-      camera.position.x =
-        computerParallax.x * valMap(scroll, [0, 1], [0.2, 5]) * 0.1 +
-        camera.position.x * 0.9;
-      camera.position.y =
-        computerParallax.y * valMap(scroll, [0, 1], [0.2, 1.5]) * 0.1 +
-        camera.position.y * 0.9 +
-        portraitCameraY;
+      if (isPortrait) {
+        // Scroll from 0 to 0.6 rotates -90deg to 0deg
+        const rotProgress = valMap(scroll, [0, 0.6], [0, 1]);
+        const rotZ = -Math.PI / 2 * (1 - rotProgress);
+        computerGroup.rotation.z = rotZ;
 
-      camera.lookAt(
-        new THREE.Vector3(0, isPortrait ? 0.4 : portraitCameraY * 0.5, 0)
-      );
+        // The terminal screen's pivot radius from the base (0,0)
+        const screenRadius = 0.5;
+        
+        // As model rotates, screen moves in an arc
+        targetLookAtX = screenRadius * Math.sin(-rotZ);
+        targetLookAtY = screenRadius * Math.cos(rotZ);
+        
+        // Camera stays directly in front of the screen
+        targetCameraX = targetLookAtX;
+        targetCameraY = targetLookAtY;
+        
+        // Move camera slightly further away when sideways to prevent edges cutting
+        camera.position.z = valMap(rotProgress, [0, 1], [-2.8, -2.1]);
+      } else {
+        computerGroup.rotation.z = 0;
+        targetLookAtY = 0;
+        targetCameraY = 0;
+      }
+
+      // Add mouse parallax on top of tracking target
+      const parallaxX = computerParallax.x * valMap(scroll, [0, 1], [0.2, 5]);
+      const parallaxY = computerParallax.y * valMap(scroll, [0, 1], [0.2, 1.5]);
+
+      // Exponential smoothing (lerp) towards target — avoids flying off to infinity
+      camera.position.x = (targetCameraX + parallaxX) * 0.1 + camera.position.x * 0.9;
+      camera.position.y = (targetCameraY + parallaxY) * 0.1 + camera.position.y * 0.9;
+
+      camera.lookAt(new THREE.Vector3(targetLookAtX, targetLookAtY, 0));
 
       canvas.style.opacity = `${valMap(scroll, [1.25, 1.75], [1, 0])}`;
-
-      // Always upright — rotation gimmick removed, usability first
-      computerGroup.rotation.z = 0;
 
       if (assists.crtMesh.morphTargetInfluences) {
         assists.crtMesh.morphTargetInfluences[0] = valMap(

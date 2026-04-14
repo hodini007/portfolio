@@ -74,12 +74,40 @@ export default function Terminal(screenTextEngine: {
 
   function updateBarRotation() {
     if (!mobileBar || !isTouch) return;
-    // Always show bar — no rotation gimmick, just keep it usable
+    const isPortraitNow = window.innerWidth < window.innerHeight;
+    if (!isPortraitNow) {
+      // Landscape/desktop: fully visible, normal
+      mobileBar.style.opacity = "1";
+      mobileBar.style.pointerEvents = "all";
+      mobileBar.style.transform = "";
+      mobileBar.style.width = "";
+      mobileBar.style.right = "";
+      return;
+    }
+    const viewH = window.innerHeight;
+    // Rotate along with the 3D model (scroll 0 to 0.6)
+    const scrollProgress = Math.min(window.scrollY / (viewH * 0.6), 1);
+    
+    // -90deg at scroll=0, 0deg when scrollProgress=1
+    const angleDeg = -90 * (1 - scrollProgress);
+    mobileBar.style.setProperty("--bar-rot", `${angleDeg}deg`);
+
     mobileBar.style.opacity = "1";
     mobileBar.style.pointerEvents = "all";
-    mobileBar.style.transform = "";
-    mobileBar.style.width = "";
-    mobileBar.style.right = "";
+
+    if (scrollProgress >= 1) {
+      // Fully upright: snap to bottom like normal
+      mobileBar.style.left   = "0";
+      mobileBar.style.right  = "0";
+      mobileBar.style.width  = "";
+      mobileBar.style.bottom = "0";
+      mobileBar.style.transform = "none";
+    } else {
+      // Still rotating: positioned along left edge, acting as landscape bar
+      mobileBar.style.right  = "auto";
+      mobileBar.style.width  = "100vh"; // full screen width since it's rotated
+      mobileBar.style.transform = "rotate(var(--bar-rot, -90deg))";
+    }
   }
 
   if (isTouch) {

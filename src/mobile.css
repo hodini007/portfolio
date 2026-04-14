@@ -121,6 +121,8 @@
     /* Start hidden in portrait; JS fades in once terminal is upright */
     opacity: 0;
     pointer-events: none;
+    transform-origin: bottom left;
+    transition: transform 0.1s linear;
   }
 
   /* Push canvas up so command bar doesn't cover the terminal */
