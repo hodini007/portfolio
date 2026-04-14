@@ -69,32 +69,37 @@ export default function Terminal(screenTextEngine: {
 
   // ── Mobile bar scroll-rotation sync ────────────────────────────────
   const mobileBar = document.getElementById("mobile-terminal") as HTMLElement | null;
-  const isTouch = navigator.maxTouchPoints > 0;
+  // Treat as touch/mobile if touch capable OR viewport is phone-sized
+  const isTouch = navigator.maxTouchPoints > 0 || window.innerWidth <= 768;
 
   function updateBarRotation() {
     if (!mobileBar || !isTouch) return;
-    const viewH = document.documentElement.clientHeight;
-    const scrollProgress = Math.min(window.scrollY / (viewH * 0.6), 1);
-    // -90deg at scroll=0, 0deg when scrollProgress=1
-    const angleDeg = -90 * (1 - scrollProgress);
-    mobileBar.style.setProperty("--bar-rot", `${angleDeg}deg`);
-
-    if (scrollProgress >= 1) {
-      // Fully upright: snap to bottom like normal
-      mobileBar.style.left   = "0";
-      mobileBar.style.right  = "0";
-      mobileBar.style.width  = "";
-      mobileBar.style.bottom = "0";
-    } else {
-      // Still rotating: positioned along left edge
-      mobileBar.style.right  = "auto";
-      mobileBar.style.width  = "100vh";
+    const isPortraitNow = window.innerWidth < window.innerHeight;
+    if (!isPortraitNow) {
+      // Landscape/desktop: fully visible, normal
+      mobileBar.style.opacity = "1";
+      mobileBar.style.pointerEvents = "all";
+      mobileBar.style.transform = "";
+      mobileBar.style.width = "";
+      mobileBar.style.right = "";
+      return;
     }
+    const viewH = window.innerHeight;
+    const scrollProgress = Math.min(window.scrollY / (viewH * 0.6), 1);
+    // While rotating: hide bar. Once upright: fade in.
+    const opacity = scrollProgress >= 0.85 ? ((scrollProgress - 0.85) / 0.15) : 0;
+    mobileBar.style.opacity = String(opacity);
+    mobileBar.style.pointerEvents = scrollProgress >= 1 ? "all" : "none";
+    // Reset any leftover transform/width from old approach
+    mobileBar.style.transform = "";
+    mobileBar.style.width = "";
+    mobileBar.style.right = "";
   }
 
   if (isTouch) {
     updateBarRotation();
     window.addEventListener("scroll", updateBarRotation, { passive: true });
+    window.addEventListener("resize", updateBarRotation, { passive: true });
   }
   // ───────────────────────────────────────────────────────────────────
 

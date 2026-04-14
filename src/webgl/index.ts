@@ -235,13 +235,16 @@ export default function WebGL() {
 
       const zoomFac = valMap(scroll, [0, 1], [0, 1]);
 
-      const isPortrait = sizes.portraitOffset > 1.0;
+      // Use actual dimensions — works on real phones AND DevTools responsive mode
+      const isPortrait = sizes.width < sizes.height;
       const hOffset = isPortrait ? 0 : controlProps.computerHorizontal * zoomFac;
       const yAngle  = isPortrait ? 0 : controlProps.computerAngle * zoomFac;
 
       if (isPortrait) {
-        // Fixed close camera for portrait — fills screen with the model
-        camera.position.z = valMap(scroll, [0, 1], [-1.5, -6]);
+        // scroll 0→0.6: rotates from -90° to 0°
+        // camera: far when sideways (prevent cutting), close when upright
+        const rotProgress = valMap(scroll, [0, 0.6], [0, 1]);
+        camera.position.z = valMap(rotProgress, [0, 1], [-4.0, -1.8]);
       } else {
         camera.position.z = valMap(
           scroll,
