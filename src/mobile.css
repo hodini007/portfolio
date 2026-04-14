@@ -118,6 +118,15 @@
 @media (pointer: coarse), (max-width: 768px) {
   #mobile-terminal {
     display: flex;
+    /* Rotation is driven by --bar-rot CSS variable set by JS */
+    transform: rotate(var(--bar-rot, -90deg));
+    transform-origin: bottom left;
+    /* When rotated -90deg: bar sits along the left edge vertically */
+    bottom: 0;
+    left: 0;
+    right: auto;
+    width: 100vh; /* full screen width becomes height when rotated */
+    transition: transform 0.1s linear;
   }
 
   /* Push canvas up so command bar doesn't cover the terminal */

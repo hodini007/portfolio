@@ -276,13 +276,10 @@ export default function WebGL() {
 
       canvas.style.opacity = `${valMap(scroll, [1.25, 1.75], [1, 0])}`;
 
-      // Portrait: boot rotation — starts sideways, rotates to face camera
+      // Portrait: scroll-driven rotation — starts sideways, user scrolls to reveal terminal
       if (isPortrait) {
-        const rotDuration = 2.0; // seconds
-        const rotProgress = Math.min(elapsedTime / rotDuration, 1.0);
-        // Ease-out cubic: starts fast, decelerates into position
-        const eased = 1 - Math.pow(1 - rotProgress, 3);
-        computerGroup.rotation.z = -Math.PI / 2 * (1 - eased);
+        const rotProgress = valMap(scroll, [0, 0.6], [0, 1]);
+        computerGroup.rotation.z = -Math.PI / 2 * (1 - rotProgress);
       } else {
         computerGroup.rotation.z = 0;
       }
