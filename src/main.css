@@ -314,7 +314,8 @@ a:active {
   position: relative;
   width: clamp(0px, 95vw, 680px);
   padding: 0;
-  height: min(550px, 80vw);
+  aspect-ratio: 4 / 3;
+  max-height: 550px;
   margin: auto;
   margin-top: 2rem;
   margin-bottom: 2rem;
