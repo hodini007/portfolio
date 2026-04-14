@@ -289,7 +289,7 @@ export default function WebGL() {
         
         // Move camera significantly further away when sideways to prevent edges cutting
         // and to keep everything properly framed despite the HTML sidebar.
-        camera.position.z = valMap(rotProgress, [0, 1], [-4.8, -2.4]);
+        camera.position.z = valMap(rotProgress, [0, 1], [-5.6, -2.4]);
       } else {
         computerGroup.rotation.z = 0;
         targetLookAtX = 0;
