@@ -40,6 +40,7 @@ export default function Terminal(screenTextEngine: {
   });
 
   screenTextEngine.scrollToEnd();
+  screenTextEngine.userInput({ type: "none", loc: "none", str: "" }, 0);
 
   const bash = Bash((s, md = false) => {
     if (md) {
@@ -98,15 +99,15 @@ export default function Terminal(screenTextEngine: {
     // Rotate along with the 3D model (scroll 0 to 0.6)
     const scrollProgress = Math.min(rawScroll / 0.6, 1);
     
-    // Rotate along with the 3D model: +90deg at scroll=0, 0deg at scroll=1
-    const angleDeg = 90 * (1 - scrollProgress);
+    // Rotate along with the 3D model: -90deg at scroll=0, 0deg at scroll=1
+    const angleDeg = -90 * (1 - scrollProgress);
     mobileBar.style.setProperty("--bar-rot", `${angleDeg}deg`);
 
     mobileBar.style.opacity = String(opacity);
     mobileBar.style.pointerEvents = pointer;
 
-    // Anchor to bottom right so it folds onto the right edge
-    mobileBar.style.transformOrigin = "bottom right";
+    // Anchor to bottom left so it folds onto the left edge
+    mobileBar.style.transformOrigin = "bottom left";
     
     // Dynamically interpolate the width from viewport height to viewport width
     const currentW = viewH + (window.innerWidth - viewH) * scrollProgress;
@@ -120,12 +121,12 @@ export default function Terminal(screenTextEngine: {
       mobileBar.style.transform = "none";
     } else {
       const barH = mobileBar.offsetHeight || 85; 
-      // Rotating from bottom-right corner outwards; it swings right.
-      // We compensate by pulling it back left into the screen using Math.sin
+      // Rotating from bottom-left corner with negative angle swings the top-left edge physically left.
+      // We pull it back right onto the screen using Math.sin
       const compX = -barH * Math.sin(angleDeg * Math.PI / 180);
       
-      mobileBar.style.left   = "auto";
-      mobileBar.style.right  = "0";
+      mobileBar.style.left   = "0";
+      mobileBar.style.right  = "auto";
       mobileBar.style.bottom = "0";
       mobileBar.style.width  = `${currentW}px`; 
       mobileBar.style.transform = `translateX(${compX}px) rotate(${angleDeg}deg)`;
@@ -161,10 +162,7 @@ export default function Terminal(screenTextEngine: {
 
     oldText = "";
     textarea.value = "";
-    screenTextEngine.userInput(
-      stringEditDistance(cmd, "")!,
-      0
-    );
+    screenTextEngine.userInput({ type: "none", loc: "none", str: "" }, 0);
     screenTextEngine.scrollToEnd();
 
     // Update path label
@@ -242,8 +240,7 @@ export default function Terminal(screenTextEngine: {
       bash.input(textarea.value);
       oldText = "";
       textarea.value = "";
-      const change = stringEditDistance(oldText, textarea.value);
-      if (change) screenTextEngine.userInput(change, textarea.selectionStart);
+      screenTextEngine.userInput({ type: "none", loc: "none", str: "" }, 0);
       screenTextEngine.scrollToEnd();
     }
   });
