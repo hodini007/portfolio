@@ -106,29 +106,36 @@ export default function Terminal(screenTextEngine: {
     mobileBar.style.opacity = String(opacity);
     mobileBar.style.pointerEvents = pointer;
 
-    // Anchor to bottom right so it folds onto the right edge reading Bottom-To-Top
-    mobileBar.style.transformOrigin = "bottom right";
+    // We explicitly use top-left anchoring so we never have negative CSS 'left' bounding boxes
+    // which fixes the "vanished" Mobile HTML bar bug caused by browser horizontal overflow clipping!
+    mobileBar.style.transformOrigin = "top left";
     
     // Dynamically interpolate the width from viewport height to viewport width
     const currentW = viewH + (window.innerWidth - viewH) * scrollProgress;
 
+    const barH = mobileBar.offsetHeight || 85; 
+    const viewW = window.innerWidth;
+
+    // Linear interpolation for X, Y, and rotation
+    const startX = viewW - barH;
+    const startY = viewH;
+    
+    const endX = 0;
+    const endY = viewH - barH;
+
+    const currentX = startX + (endX - startX) * scrollProgress;
+    const currentY = startY + (endY - startY) * scrollProgress;
+
+    mobileBar.style.left = "0";
+    mobileBar.style.top = "0";
+    mobileBar.style.right = "auto";
+    mobileBar.style.bottom = "auto";
+    mobileBar.style.width = `${currentW}px`;
+
     if (scrollProgress >= 1) {
-      // Fully upright: snap to bottom like normal
-      mobileBar.style.left   = "0";
-      mobileBar.style.right  = "0";
-      mobileBar.style.width  = "100%";
-      mobileBar.style.bottom = "0";
-      mobileBar.style.transform = "none";
+      mobileBar.style.transform = `translate(0px, ${endY}px)`;
     } else {
-      // Rotating -90deg from bottom-right makes it drop BELOW the screen by exactly its width.
-      // We translate it UP by its width (viewH) inversely scaled to keep it planted on-screen.
-      const shiftY = -viewH * (1 - scrollProgress);
-      
-      mobileBar.style.left   = "auto";
-      mobileBar.style.right  = "0";
-      mobileBar.style.bottom = "0";
-      mobileBar.style.width  = `${currentW}px`; 
-      mobileBar.style.transform = `translateY(${shiftY}px) rotate(${angleDeg}deg)`;
+      mobileBar.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${angleDeg}deg)`;
     }
   }
 
