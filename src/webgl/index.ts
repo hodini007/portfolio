@@ -283,7 +283,7 @@ export default function WebGL() {
         targetCameraY = targetLookAtY;
         
         // Move camera slightly further away when sideways to prevent edges cutting
-        camera.position.z = valMap(rotProgress, [0, 1], [-2.8, -2.1]);
+        camera.position.z = valMap(rotProgress, [0, 1], [-3.2, -2.4]);
       } else {
         computerGroup.rotation.z = 0;
         targetLookAtY = 0;

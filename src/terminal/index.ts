@@ -85,28 +85,45 @@ export default function Terminal(screenTextEngine: {
       return;
     }
     const viewH = window.innerHeight;
+    const rawScroll = window.scrollY / viewH;
+    
+    // Fade out completely when scrolling past the terminal (matches 3D terminal fade)
+    let opacity = 1;
+    let pointer = "all";
+    if (rawScroll > 1.25) {
+      opacity = Math.max(1 - (rawScroll - 1.25) / 0.5, 0); // fades from 1.25 to 1.75
+      if (opacity <= 0) pointer = "none";
+    }
+    
     // Rotate along with the 3D model (scroll 0 to 0.6)
-    const scrollProgress = Math.min(window.scrollY / (viewH * 0.6), 1);
+    const scrollProgress = Math.min(rawScroll / 0.6, 1);
     
     // -90deg at scroll=0, 0deg when scrollProgress=1
     const angleDeg = -90 * (1 - scrollProgress);
     mobileBar.style.setProperty("--bar-rot", `${angleDeg}deg`);
 
-    mobileBar.style.opacity = "1";
-    mobileBar.style.pointerEvents = "all";
+    mobileBar.style.opacity = String(opacity);
+    mobileBar.style.pointerEvents = pointer;
+
+    mobileBar.style.transformOrigin = "bottom left";
+    
+    // Dynamically interpolate the width from viewport height to viewport width
+    const currentW = viewH + (window.innerWidth - viewH) * scrollProgress;
 
     if (scrollProgress >= 1) {
       // Fully upright: snap to bottom like normal
       mobileBar.style.left   = "0";
       mobileBar.style.right  = "0";
-      mobileBar.style.width  = "";
+      mobileBar.style.width  = "100%";
       mobileBar.style.bottom = "0";
       mobileBar.style.transform = "none";
     } else {
       // Still rotating: positioned along left edge, acting as landscape bar
+      mobileBar.style.left   = "0";
+      mobileBar.style.bottom = "0";
       mobileBar.style.right  = "auto";
-      mobileBar.style.width  = "100vh"; // full screen width since it's rotated
-      mobileBar.style.transform = "rotate(var(--bar-rot, -90deg))";
+      mobileBar.style.width  = `${currentW}px`; // dynamic width ensures it covers the edge perfectly
+      mobileBar.style.transform = `rotate(${angleDeg}deg)`;
     }
   }
 
