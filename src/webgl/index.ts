@@ -274,9 +274,10 @@ export default function WebGL() {
         // The terminal screen's pivot radius from the base (0,0)
         const screenRadius = 0.5;
         
-        // We add a pan offset when sideways to push the camera visual center right 
-        // (moving the object comfortably left into the open viewport window).
-        const panOffset = valMap(rotProgress, [0, 1], [-0.85, 0]);
+        // We add a pan offset when sideways. Since the camera is at Z = -4.6 (looking down +Z),
+        // World +X is actually visually LEFT on screen! To push the camera visual center right 
+        // (moving the object left), we must shift the camera to World -X.
+        const panOffset = valMap(rotProgress, [0, 1], [-0.8, 0]);
 
         // As model rotates, screen moves in an arc
         targetLookAtX = screenRadius * Math.sin(-rotZ) + panOffset;
@@ -284,14 +285,11 @@ export default function WebGL() {
         
         // Camera stays directly in front of the screen
         targetCameraX = targetLookAtX;
+        targetCameraY = targetLookAtY;
         
-        // CRITICAL FIX: We must organically lift the camera slightly +Y (0.5 units) 
-        // when sideways. Because the computer floor is at Y=0, having the camera exactly at 
-        // Y=0 caused mathematically pure coplanar Z-buffer tearing (the jagged shards).
-        targetCameraY = targetLookAtY + valMap(rotProgress, [0, 1], [0.5, 0]);
-        
-        // Keep camera significantly further away when sideways to prevent edges cutting
-        camera.position.z = valMap(rotProgress, [0, 1], [-6.8, -2.4]);
+        // Move camera significantly further away when sideways to prevent edges cutting
+        // and to keep everything properly framed despite the HTML sidebar.
+        camera.position.z = valMap(rotProgress, [0, 1], [-7.4, -2.4]);
       } else {
         computerGroup.rotation.z = 0;
         targetLookAtX = 0;
