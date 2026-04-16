@@ -6,7 +6,7 @@
 
 ## 🖥️ Live Demo
 
-🔗 **[hodini007.github.io/portfolio](https://hodini007.github.io/portfolio/)**
+🔗 **[hodini007.github.io/portfolio](https://raiyanbinrafique.netlify.app/)**
 
 ---
 
